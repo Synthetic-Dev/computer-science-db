@@ -1,0 +1,23 @@
+{
+  "name": "computer-science-db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "engines": {
+    "node": "14.x",
+    "nodemon": "2.x"
+  },
+  "scripts": {
+    "start": "node .",
+    "dev": "nodemon .",
+    "token": "node ./temp/token.js"
+  },
+  "keywords": [],
+  "author": "Leon Semmens",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.10.15"
+  }
+}

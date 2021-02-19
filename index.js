@@ -27,7 +27,7 @@ app.use(Express.json())
 app.use((request, resolve, next) => {
     resolve.append('Access-Control-Allow-Origin', ['*'])
     resolve.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
-    resolve.append('Access-Control-Allow-Headers', 'Content-Type')
+    resolve.append('Access-Control-Allow-Headers', '*')
 
     if (request.ips.length > 0 && !request.secure){
         return resolve.sendStatus(505)

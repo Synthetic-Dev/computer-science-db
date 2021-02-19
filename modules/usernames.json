@@ -1,0 +1,62 @@
+[
+    {
+        "FirstName": "Ed",
+        "LastName": "Sheeran",
+        "Username": "esheeran",
+        "Password": "castleonthehill"
+    },
+    {
+        "FirstName": "Bruno",
+        "LastName": "Mars",
+        "Username": "bmars",
+        "Password": "24kmagic"
+    },
+    {
+        "FirstName": "Katy",
+        "LastName": "Perry",
+        "Username": "kperry",
+        "Password": "roar"
+    },
+    {
+        "FirstName": "Taylor",
+        "LastName": "Swift",
+        "Username": "tswift",
+        "Password": "blankspace"
+    },
+    {
+        "FirstName": "Justin",
+        "LastName": "Timberlake",
+        "Username": "jtimberlake",
+        "Password": "mirrors"
+    },
+    {
+        "FirstName": "Jim",
+        "LastName": "Morrison",
+        "Username": "jmorrison",
+        "Password": "undiscovered"
+    },
+    {
+        "FirstName": "James",
+        "LastName": "Blunt",
+        "Username": "jblunt",
+        "Password": "3wisemen"
+    },
+    {
+        "FirstName": "Jack",
+        "LastName": "Johnson",
+        "Username": "jjohnson",
+        "Password": "bananapancakes"
+    },
+    {
+        "FirstName": "Paloma",
+        "LastName": "Faith",
+        "Username": "pfaith",
+        "Password": "black&blue"
+    },
+    {
+        "FirstName": "Calvin",
+        "LastName": "Harris",
+        "Username": "charris",
+        "Password": "neonrocks"
+    }
+]

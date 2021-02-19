@@ -16,6 +16,14 @@ const UserSchema = new Mongoose.Schema({
 })
 const UserModel = Mongoose.model("users", UserSchema)
 
+{
+    let usernames = require("./usernames.json")
+    usernames.forEach(user => {
+        let data = new UserModel(user)
+        data.save()
+    })
+}
+
 module.exports = [
     {
         path: "captcha-project-validate-login",
@@ -31,7 +39,7 @@ module.exports = [
             if (!(userValidation instanceof Object)) return resolve.status(400).send("User validation must be JSON object");
             if (!userValidation.username || !userValidation.password) return resolve.status(400).send("User validation must contain username and password");
 
-            let data = UserModel.findOne({
+            let data = await UserModel.findOne({
                 Username: userValidation.username,
                 Password: userValidation.password
             })

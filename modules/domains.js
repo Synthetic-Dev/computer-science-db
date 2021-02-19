@@ -18,7 +18,7 @@ const UserModel = Mongoose.model("users", UserSchema)
 
 module.exports = [
     {
-        path: "api/captcha-project-validate-login",
+        path: "captcha-project-validate-login",
         type: "POST",
         requirements: ["id"],
         method: async (request, resolve) => {

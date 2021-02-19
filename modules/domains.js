@@ -29,6 +29,7 @@ module.exports = [
             if (request.header("X-Access-Token") != process.env.ACCESSTOKEN) return resolve.status(498).send("An invalid access token was provided");
 
             userValidation = JSON.parse(userValidation)
+            console.log(userValidation)
             if (typeof userValidation != Object) return resolve.status(400).send("User validation must be JSON object");
             if (!userValidation.username || !userValidation.password) return resolve.status(400).send("User validation must contain username and password");
 

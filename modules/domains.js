@@ -19,7 +19,7 @@ const UserModel = Mongoose.model("users", UserSchema)
 module.exports = [
     {
         name: "captcha-project-validate-login",
-        type: "GET",
+        type: "POST",
         requirements: ["id"],
         method: async (request, resolve) => {
             let userValidation = request.header("X-User-Validation")
@@ -38,6 +38,7 @@ module.exports = [
             })
 
             if (data) {
+                resolve
                 resolve.send(JSON.stringify({
                     exists: true
                 }))

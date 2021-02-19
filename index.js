@@ -25,6 +25,10 @@ app.enable("trust proxy")
 
 app.use(Express.json())
 app.use((request, resolve, next) => {
+    resolve.append('Access-Control-Allow-Origin', ['*'])
+    resolve.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+    resolve.append('Access-Control-Allow-Headers', 'Content-Type')
+
     if (request.ips.length > 0 && !request.secure){
         return resolve.sendStatus(505)
     } else {
@@ -33,9 +37,8 @@ app.use((request, resolve, next) => {
 })
 
 Domains.forEach(domain => {
-    app.get(`/${domain.name}`, (request, resolve) => {
-        domain.method(request, resolve)
-    })
+    if (domain.type == "POST") app.post(`/${domain.name}`, domain.method);
+    else app.get(`/${domain.name}`, domain.method);
 })
 
 

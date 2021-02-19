@@ -37,6 +37,8 @@ module.exports = [
                 Password: userValidation.password
             })
 
+            console.log(data)
+
             if (data) {
                 resolve
                 resolve.send(JSON.stringify({

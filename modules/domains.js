@@ -116,7 +116,7 @@ module.exports = [
 
             userValidation = JSON.parse(userValidation)
             if (!(userValidation instanceof Object)) return resolve.status(400).send("User validation must be JSON object");
-            if (!userValidation.username || !userValidation.password) return resolve.status(400).send("User validation must contain username, password and captcha id");
+            if (!userValidation.username || !userValidation.password || !userValidation.captchaid) return resolve.status(400).send("User validation must contain username, password and captcha id");
 
             let data = await UserModel.findOne({
                 Username: userValidation.username,

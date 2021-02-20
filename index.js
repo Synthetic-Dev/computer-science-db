@@ -3,10 +3,13 @@ require("dotenv").config()
 const Express = require("express")
 const Mongoose = require("mongoose")
 const Domains = require("./modules/domains.js")
+const Captchas = require("./modules/captchas.js")
 
 /**
  * Startup
  */
+Captchas.clearCaptchas()
+
 const app = Express()
 console.log("App created")
 

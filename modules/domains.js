@@ -44,8 +44,6 @@ module.exports = [
                 Password: userValidation.password
             })
 
-            console.log(data)
-
             if (data) {
                 resolve.send(JSON.stringify({
                     exists: true
@@ -55,6 +53,58 @@ module.exports = [
                     exists: false
                 }))
             }
+        }
+    },
+    {
+        path: "captcha-project-signup",
+        type: "POST",
+        method: async (request, resolve) => {
+            let userContent = request.header("X-User-Content")
+            if (!userContent) return resolve.status(400).send("Expects user content");
+        
+            if (!request.header("X-Access-Token")) return resolve.status(499).send("An access token is required for this request")
+            if (request.header("X-Access-Token") != process.env.ACCESSTOKEN) return resolve.status(498).send("An invalid access token was provided");
+
+            userContent = JSON.parse(userContent)
+            if (!(userContent instanceof Object)) return resolve.status(400).send("User content must be JSON object");
+            if (!userContent.firstname || !userContent.lastname || !userContent.password) return resolve.status(400).send("User content must contain firstname, lastname and password");
+
+            let username = userContent.firstname.substr(0, 1).toLowerCase() + userContent.lastname.toLowerCase()
+
+            let data = await UserModel.findOne({
+                Username: username,
+            })
+
+            if (data) {
+                let index = 2
+                while (true) {
+                    let tempUsername = username + index
+
+                    let data = await UserModel.findOne({
+                        Username: tempUsername,
+                    })
+
+                    if (!data) {
+                        username = tempUsername
+                        break
+                    }
+
+                    index++
+                }
+            }
+
+            data = new UserModel({
+                FirstName: userContent.firstname,
+                LastName: userContent.lastname,
+                Username: username,
+                Password: userContent.password
+            })
+            data.save()
+
+            resolve.send(JSON.stringify({
+                created: true,
+                username: username
+            }))
         }
     },
 ]

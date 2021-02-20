@@ -29,12 +29,11 @@ app.use((request, resolve, next) => {
     resolve.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
     resolve.append('Access-Control-Allow-Headers', '*')
 
-    next()/*
     if (request.ips.length > 0 && !request.secure){
         return resolve.sendStatus(505)
     } else {
         next()
-    }*/
+    }
 })
 
 Domains.forEach(domain => {

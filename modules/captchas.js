@@ -1,5 +1,4 @@
 const Mongoose = require("mongoose")
-const Settings = require("../settings.json")
 
 const CaptchaSchema = new Mongoose.Schema({
     Question: {

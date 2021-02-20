@@ -1,4 +1,5 @@
 const Mongoose = require("mongoose")
+const Captchas = require("./captchas.js")
 
 const UserSchema = new Mongoose.Schema({
     FirstName: {
@@ -49,6 +50,44 @@ function validatePassword(password) {
 
 module.exports = [
     {
+        path: "captcha-project-captcha",
+        type: "GET",
+        method: async (request, resolve) => {
+            let captchaData = request.header("X-Captcha-Data")
+            if (!captchaData) return resolve.status(400).send("Expects captcha data");
+        
+            if (!request.header("X-Access-Token")) return resolve.status(499).send("An access token is required for this request")
+            if (request.header("X-Access-Token") != process.env.ACCESSTOKEN) return resolve.status(498).send("An invalid access token was provided");
+
+            captchaData = JSON.parse(captchaData)
+            if (!(captchaData instanceof Object)) return resolve.status(400).send("Captcha data must be JSON object");
+            if (!captchaData.get && !captchaData.try) return resolve.status(400).send("Captcha data must contain get or try");
+
+            if (captchaData.get) {
+                let captcha = await Captchas.generateCaptcha()
+                resolve.send(JSON.stringify(captcha))
+            } else if (captchaData.try) {
+                if (!captchaData.id || !captchaData.answer) return resolve.status(400).send("Captcha data must contain id and answer for try");
+
+                let captcha = await Captchas.getCaptcha(captchaData.id)
+                if (captcha) {
+                    if (captchaData.answer == captcha.Answer) {
+                        Captchas.completeCaptcha(captchaData.id)
+                        resolve.send(JSON.stringify({
+                            completed: true
+                        }))
+                    } else {
+                        resolve.send(JSON.stringify({
+                            completed: false
+                        }))
+                    }
+                } else {
+                    resolve.status(400).send("Provided captcha id is invalid");
+                }
+            }
+        }
+    },
+    {
         path: "captcha-project-validate-password",
         type: "POST",
         method: async (request, resolve) => {
@@ -77,21 +116,43 @@ module.exports = [
 
             userValidation = JSON.parse(userValidation)
             if (!(userValidation instanceof Object)) return resolve.status(400).send("User validation must be JSON object");
-            if (!userValidation.username || !userValidation.password) return resolve.status(400).send("User validation must contain username and password");
+            if (!userValidation.username || !userValidation.password) return resolve.status(400).send("User validation must contain username, password and captcha id");
 
             let data = await UserModel.findOne({
                 Username: userValidation.username,
                 Password: userValidation.password
             })
 
-            if (data) { 
-                resolve.send(JSON.stringify({
-                    exists: true
-                }))
+            if (userValidation.captchaid == -1) {
+                if (data) { 
+                    resolve.send(JSON.stringify({
+                        loggedin: false,
+                        exists: true
+                    }))
+                } else {
+                    resolve.send(JSON.stringify({
+                        loggedin: false,
+                        exists: false
+                    }))
+                }
             } else {
-                resolve.send(JSON.stringify({
-                    exists: false
-                }))
+                let captcha = await Captchas.getCaptcha(userValidation.captchaid)
+
+                if (captcha) {
+                    if (captcha.Completed) {
+                        resolve.send(JSON.stringify({
+                            loggedin: true,
+                            exists: true
+                        }))
+                    } else {
+                        resolve.send(JSON.stringify({
+                            loggedin: false,
+                            exists: true
+                        }))
+                    }
+                } else {
+                    resolve.status(400).send("Provided captcha id is invalid");
+                }
             }
         }
     },

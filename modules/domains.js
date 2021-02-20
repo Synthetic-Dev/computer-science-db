@@ -154,7 +154,10 @@ module.exports = [
                         }))
                     }
                 } else {
-                    resolve.status(400).send("Provided captcha id is invalid");
+                    resolve.send(JSON.stringify({
+                        loggedin: false,
+                        exists: true
+                    }))
                 }
             }
         }

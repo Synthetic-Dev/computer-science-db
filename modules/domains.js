@@ -65,7 +65,10 @@ module.exports = [
 
             if (captchaData.get) {
                 let captcha = await Captchas.generateCaptcha()
-                resolve.send(JSON.stringify(captcha))
+                resolve.send(JSON.stringify({
+                    id: captcha.Id,
+                    question: captcha.Question
+                }))
             } else if (captchaData.try) {
                 if (!captchaData.id || !captchaData.answer) return resolve.status(400).send("Captcha data must contain id and answer for try");
 

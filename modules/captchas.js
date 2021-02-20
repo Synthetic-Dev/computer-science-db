@@ -23,7 +23,7 @@ const CaptchaModel = Mongoose.model("captchas", CaptchaSchema)
 class Captchas {
     /**
      * Gets the captcha associated with the given id
-     * @param {string} userId 
+     * @param {string} id 
      * @returns {Mongoose.DocumentQuery<Mongoose.Document>}
      */
     static getCaptcha(id) {
@@ -34,7 +34,7 @@ class Captchas {
 
     /**
      * Complete a captcha
-     * @param {string} answer 
+     * @param {string} id 
      */
     static async completeCaptcha(id) {
         await CaptchaModel.findOneAndUpdate({

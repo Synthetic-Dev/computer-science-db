@@ -36,8 +36,8 @@ class Captchas {
      * Complete a captcha
      * @param {string} answer 
      */
-    static completeCaptcha(id) {
-        CaptchaModel.findOneAndUpdate({
+    static async completeCaptcha(id) {
+        await CaptchaModel.findOneAndUpdate({
             Id: id
         },
         {

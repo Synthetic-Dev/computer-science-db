@@ -75,7 +75,7 @@ module.exports = [
                 let captcha = await Captchas.getCaptcha(captchaData.id)
                 if (captcha) {
                     if (captchaData.answer == captcha.Answer) {
-                        Captchas.completeCaptcha(captchaData.id)
+                        await Captchas.completeCaptcha(captchaData.id)
                         resolve.send(JSON.stringify({
                             completed: true
                         }))

@@ -97,7 +97,7 @@ module.exports = [
     },
     {
         path: "captcha-project-validate-password",
-        type: "GET",
+        type: "POST",
         method: async (request, resolve) => {
             let userValidation = request.header("X-User-Validation")
             if (!userValidation) return resolve.status(400).send("Expects user validation");
@@ -110,6 +110,50 @@ module.exports = [
             if (!userValidation.password) return resolve.status(400).send("User validation must the password");
 
             resolve.send(JSON.stringify(validatePassword(userValidation.password)))
+        }
+    },
+    {
+        path: "captcha-project-change-password",
+        type: "POST",
+        method: async (request, resolve) => {
+            let userContent = request.header("X-User-Content")
+            if (!userContent) return resolve.status(400).send("Expects user content");
+        
+            if (!request.header("X-Access-Token")) return resolve.status(499).send("An access token is required for this request")
+            if (request.header("X-Access-Token") != process.env.ACCESSTOKEN) return resolve.status(498).send("An invalid access token was provided");
+
+            userContent = JSON.parse(userContent)
+            if (!(userContent instanceof Object)) return resolve.status(400).send("User content must be JSON object");
+            if (!userContent.username || !userContent.oldpassword || !userContent.newpassword) return resolve.status(400).send("User content must contain username, oldpassword and newpassword");
+
+            let result = validatePassword(userContent.newpassword)
+            if (!result.valid) {
+                result.changed = false
+                return resolve.send(JSON.stringify(result))
+            }
+
+            let data = await UserModel.findOne({
+                Username: userContent.username,
+                Password: userContent.oldpassword
+            })
+
+            if (data) {
+                await UserModel.findOneAndUpdate({
+                    Username: userContent.username,
+                    Password: userContent.oldpassword
+                },
+                {
+                    Password: userContent.newpassword
+                })
+                resolve.send(JSON.stringify({
+                    changed: true
+                }))
+            } else {
+                resolve.send(JSON.stringify({
+                    changed: false,
+                    reason: "Incorrect password"
+                }))
+            }
         }
     },
     {
@@ -227,7 +271,7 @@ module.exports = [
     },
     {
         path: "captcha-project-user",
-        type: "GET",
+        type: "POST",
         method: async (request, resolve) => {
             let userValidation = request.header("X-User-Validation")
             if (!userValidation) return resolve.status(400).send("Expects user validation");
@@ -237,30 +281,22 @@ module.exports = [
 
             userValidation = JSON.parse(userValidation)
             if (!(userValidation instanceof Object)) return resolve.status(400).send("User validation must be JSON object");
-            if (!userValidation.username || !userValidation.password || !userValidation.captchaid) return resolve.status(400).send("User validation must contain username, password and captcha id");
+            if (!userValidation.username || !userValidation.password) return resolve.status(400).send("User validation must contain username and password");
 
             let data = await UserModel.findOne({
                 Username: userValidation.username,
                 Password: userValidation.password
             })
 
-            let captcha = await Captchas.getCaptcha(userValidation.captchaid)
-
-            if (captcha && data) {
-                if (captcha.Completed) {
-                    resolve.send(JSON.stringify({
-                        user: {
-                            firstname: data.FirstName,
-                            lastname: data.LastName,
-                            username: data.Username
-                        },
-                        exists: true
-                    }))
-                } else {
-                    resolve.send(JSON.stringify({
-                        exists: true
-                    }))
-                }
+            if (data) {
+                resolve.send(JSON.stringify({
+                    user: {
+                        firstname: data.FirstName,
+                        lastname: data.LastName,
+                        username: data.Username
+                    },
+                    exists: true
+                }))
             } else {
                 resolve.send(JSON.stringify({
                     exists: false

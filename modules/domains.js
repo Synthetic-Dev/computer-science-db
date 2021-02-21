@@ -141,7 +141,7 @@ module.exports = [
             } else {
                 let captcha = await Captchas.getCaptcha(userValidation.captchaid)
 
-                if (captcha) {
+                if (captcha && data) {
                     if (captcha.Completed) {
                         resolve.send(JSON.stringify({
                             loggedin: true,
@@ -156,7 +156,7 @@ module.exports = [
                 } else {
                     resolve.send(JSON.stringify({
                         loggedin: false,
-                        exists: true
+                        exists: false
                     }))
                 }
             }
@@ -218,6 +218,49 @@ module.exports = [
                 created: true,
                 username: username
             }))
+        }
+    },
+    {
+        path: "captcha-project-user",
+        type: "GET",
+        method: async (request, resolve) => {
+            let userValidation = request.header("X-User-Validation")
+            if (!userValidation) return resolve.status(400).send("Expects user validation");
+        
+            if (!request.header("X-Access-Token")) return resolve.status(499).send("An access token is required for this request")
+            if (request.header("X-Access-Token") != process.env.ACCESSTOKEN) return resolve.status(498).send("An invalid access token was provided");
+
+            userValidation = JSON.parse(userValidation)
+            if (!(userValidation instanceof Object)) return resolve.status(400).send("User validation must be JSON object");
+            if (!userValidation.username || !userValidation.password || !userValidation.captchaid) return resolve.status(400).send("User validation must contain username, password and captcha id");
+
+            let data = await UserModel.findOne({
+                Username: userValidation.username,
+                Password: userValidation.password
+            })
+
+            let captcha = await Captchas.getCaptcha(userValidation.captchaid)
+
+            if (captcha && data) {
+                if (captcha.Completed) {
+                    resolve.send(JSON.stringify({
+                        user: {
+                            firstname: data.FirstName,
+                            lastname: data.LastName,
+                            username: data.Username
+                        },
+                        exists: true
+                    }))
+                } else {
+                    resolve.send(JSON.stringify({
+                        exists: true
+                    }))
+                }
+            } else {
+                resolve.send(JSON.stringify({
+                    exists: false
+                }))
+            }
         }
     },
 ]

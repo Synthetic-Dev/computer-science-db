@@ -54,8 +54,8 @@ class Captchas {
 
         const operators = ["+", "-", "*", "/"]
         let operator = operators[Math.floor(Math.random() * 4)]
-        let number1 = Math.floor(Math.random() * 10)
-        let number2 = Math.floor(Math.random() * 10)
+        let number1 = Math.ceil(Math.random() * 20)
+        let number2 = Math.ceil(Math.random() * 20)
         let answers = {
             "+": number1 + number2,
             "-": number1 - number2,

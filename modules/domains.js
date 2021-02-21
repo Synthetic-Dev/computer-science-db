@@ -92,7 +92,7 @@ module.exports = [
     },
     {
         path: "captcha-project-validate-password",
-        type: "POST",
+        type: "GET",
         method: async (request, resolve) => {
             let userValidation = request.header("X-User-Validation")
             if (!userValidation) return resolve.status(400).send("Expects user validation");

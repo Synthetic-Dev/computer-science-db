@@ -19,12 +19,12 @@ const UserModel = Mongoose.model("users", UserSchema)
 
 {
     let usernames = require("./usernames.json")
-    usernames.forEach(user => {
-        let data = UserModel.findOne({
+    usernames.forEach(async user => {
+        let data = await UserModel.findOne({
             Username: user.Username
         })
         if (data) return;
-        
+
         data = new UserModel(user)
         data.save()
     })

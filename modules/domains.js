@@ -132,6 +132,13 @@ module.exports = [
                 return resolve.send(JSON.stringify(result))
             }
 
+            if (userContent.oldpassword == userContent.newpassword) {
+                resolve.send(JSON.stringify({
+                    changed: false,
+                    reason: "New password is same as current password"
+                }))
+            }
+
             let data = await UserModel.findOne({
                 Username: userContent.username,
                 Password: userContent.oldpassword
